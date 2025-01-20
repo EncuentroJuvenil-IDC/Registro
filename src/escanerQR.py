@@ -33,7 +33,7 @@ def registerABS(Nombre = "Hola",lugarHoja = "Otros"):
         st.success("Se registro su asistencia correctamente")
 
 #Funcion de revisar pago
-def get_payment_for_name(df, name_to_check):
+def get_info_by_QR(df, name_to_check="Hola",column="Pago"):
     st.cache_data.clear()
     conn = st.connection("gsheets", type=GSheetsConnection)
     existing_data = conn.read(worksheet="RespuestasFormulario")
@@ -42,7 +42,7 @@ def get_payment_for_name(df, name_to_check):
     if name_to_check in df['VariableAuxiliar'].values:
         #Encontrar el index
         idx = df[df['VariableAuxiliar'] == name_to_check].index[0]
-        return df.at[idx, 'Pago']  #Regresa el valor guardado en la columna de pagos
+        return df.at[idx, column]  #Regresa el valor guardado en la columna de pagos
     else:
         return None  #Nombre no esta en la lista
 
@@ -62,10 +62,14 @@ if picture is not None:
     data, points, _ = detector.detectAndDecode(gray_image)
     # Display the result
     if data:
-        st.write("Información del QR:/n", data)
-        checkingPay = get_payment_for_name(df, data)
+        checkingName = get_info_by_QR(df, data,"VariableAux2")
+        st.write(f"Información del QR: {checkingName}")
+        checkingPay = get_info_by_QR(df, data,"Pago")
         if checkingPay is not None:
-            st.success(f"¿El pago ha sido realizado?: {checkingPay}")
+            if checkingPay == "si":
+                st.success("El pago ha sido realizado")
+            else:
+                st.warning("El pago no ha sido efectuado")
             registerABS(data,"Asistencia")
         else:
             st.warning(f"No hay registros")
