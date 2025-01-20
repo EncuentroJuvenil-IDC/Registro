@@ -36,7 +36,7 @@ def registerABS(Nombre = "Hola",lugarHoja = "Otros"):
 def get_payment_for_name(df, name_to_check):
     st.cache_data.clear()
     conn = st.connection("gsheets", type=GSheetsConnection)
-    existing_data = conn.read(worksheet="Respuestas de formulario 1")
+    existing_data = conn.read(worksheet="RespuestasFormulario")
     df = pd.DataFrame(existing_data)
     # Revisar el nombre en la lista
     if name_to_check in df['VariableAuxiliar'].values:
