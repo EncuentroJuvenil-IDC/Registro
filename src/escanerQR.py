@@ -24,7 +24,7 @@ def registerABS(Nombre = "Hola",lugarHoja = "Otros"):
     conn = st.connection("gsheets", type=GSheetsConnection)
     guardarEnHoja = conn.read(worksheet=lugarHoja)
     if Nombre in guardarEnHoja["RegistrosQR"].values:
-        st.warning("El usario ya ha sido registrado")
+        st.success("El usario ya ha sido registrado")
         st.stop()
     else:
         new_to_add = pd.DataFrame([{"RegistrosQR": Nombre}])
@@ -63,7 +63,7 @@ if picture is not None:
     # Display the result
     if data:
         checkingName = get_info_by_QR(df, data,"VariableAux2")
-        st.write(f"Información del QR: {checkingName}")
+        st.write(f"Información del QR:\n {checkingName}")
         checkingPay = get_info_by_QR(df, data,"Pago")
         if checkingPay is not None:
             if checkingPay == "si":
