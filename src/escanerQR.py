@@ -63,7 +63,7 @@ if picture is not None:
     # Display the result
     if data:
         checkingName = get_info_by_QR(df, data,"VariableAux2")
-        st.write(f"Información del QR:\n {checkingName}")
+        st.write("Información del QR:\n\n", checkingName)
         checkingPay = get_info_by_QR(df, data,"Pago")
         if checkingPay is not None:
             if checkingPay == "si":
