@@ -24,7 +24,7 @@ def registerABS(Nombre = "Hola",lugarHoja = "Otros"):
     conn = st.connection("gsheets", type=GSheetsConnection)
     guardarEnHoja = conn.read(worksheet=lugarHoja)
     if Nombre in guardarEnHoja["RegistrosQR"].values:
-        st.success("El usario ya ha sido registrado")
+        st.success("Ya ha sido registrado su asistencia el dia de hoy")
         st.stop()
     else:
         new_to_add = pd.DataFrame([{"RegistrosQR": Nombre}])
