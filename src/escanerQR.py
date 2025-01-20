@@ -13,7 +13,7 @@ enable = st.checkbox("Enable camera")
 #Conectar el documento de google
 conn = st.connection("gsheets", type=GSheetsConnection)
 #Conectar las hojas
-existing_data = conn.read(worksheet="Respuestas de formulario 1")
+existing_data = conn.read(worksheet="RespuestasFormulario")
 asistencia = conn.read(worksheet="Asistencia")
 otros = conn.read(worksheet="Otros")
 df = pd.DataFrame(existing_data)
