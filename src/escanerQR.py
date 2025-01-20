@@ -29,7 +29,7 @@ def registerABS(Nombre = "Hola",lugarHoja = "Otros"):
     else:
         new_to_add = pd.DataFrame([{"RegistrosQR": Nombre}])
         update_row = pd.concat([guardarEnHoja, new_to_add], ignore_index=False)
-        conn.update(worksheet="Sabado", data=update_row)
+        conn.update(worksheet=lugarHoja data=update_row)
         st.success("Se registro su asistencia correctamente")
 
 #Funcion de revisar pago
