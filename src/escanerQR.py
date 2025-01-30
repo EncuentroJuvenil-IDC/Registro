@@ -77,4 +77,4 @@ if picture is not None:
         else:
             st.warning("No hay registros.")
     else:
-        st.write("No hay códigos QR en la imagen.")
+        st.warning("No hay códigos QR en la imagen.")
