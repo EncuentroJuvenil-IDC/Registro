@@ -41,7 +41,12 @@ def registerABS(buscarNombre,registrar):
         new_to_add = registrar
         update_row = pd.concat([guardarasistencia, new_to_add], ignore_index=False)
         conn3.update(worksheet="Asistencia", data=update_row)
+        st.success(buscarNombre)
         st.success("Se registro su asistencia correctamente")
+        if new_to_add[5] == "Vip":
+            st.info("Usuario VIP")
+        else:
+            st.info("Usuario regular")
 
 #Función principal
 picture = st.camera_input("Take a picture", disabled=not enable)
@@ -77,4 +82,4 @@ if picture is not None:
         else:
             st.warning("No hay registros.")
     else:
-        st.warning("No hay códigos QR en la imagen.")
+        st.error("No hay códigos QR en la imagen.")
