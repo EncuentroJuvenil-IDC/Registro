@@ -35,6 +35,7 @@ def registerABS(buscarNombre,registrar):
     conn3 = st.connection("gsheets_asistencia", type=GSheetsConnection)
     guardarasistencia = conn3.read(worksheet="Asistencia")
     if buscarNombre in guardarasistencia["NombreCompleto"].values:
+        st.success(buscarNombre)
         st.success("Ya ha sido registrado su asistencia")
         st.stop()
     else:
