@@ -9,7 +9,7 @@ import pandas as pd
 
 #Activar y desactivar la cámara
 enable = st.checkbox("Enable camera")
-
+#New
 #Conectar los documentos de google
 conn1 = st.connection("gsheets", type=GSheetsConnection)
 preregistro = conn1.read(worksheet="RespuestasPRegistro")
