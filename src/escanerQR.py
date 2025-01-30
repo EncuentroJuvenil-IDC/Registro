@@ -36,7 +36,7 @@ def registerABS(buscarNombre,registrar,tipo):
     guardarasistencia = conn3.read(worksheet="Asistencia")
     if buscarNombre in guardarasistencia["NombreCompleto"].values:
         st.success(buscarNombre)
-        st.info("Ya ha sido registrado su asistencia")
+        st.warning("Ya ha sido registrado su asistencia")
         st.info(f"Usuario {tipo}")
         st.stop()
     else:
@@ -44,7 +44,7 @@ def registerABS(buscarNombre,registrar,tipo):
         update_row = pd.concat([guardarasistencia, new_to_add], ignore_index=False)
         conn3.update(worksheet="Asistencia", data=update_row)
         st.success(buscarNombre)
-        st.info("Se registro su asistencia correctamente")
+        st.success("Se registro su asistencia correctamente")
         st.info(f"Usuario {tipo}")
 
 #Función principal
