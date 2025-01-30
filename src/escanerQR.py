@@ -30,7 +30,7 @@ def obtenerInfo(buscarNombre,column,bookname,sheetname,searching):
     else:
         return None  #Nombre no esta en la lista
 
-def registerABS(buscarNombre,registrar):
+def registerABS(buscarNombre,registrar,tipo):
     st.cache_data.clear()
     conn3 = st.connection("gsheets_asistencia", type=GSheetsConnection)
     guardarasistencia = conn3.read(worksheet="Asistencia")
@@ -44,7 +44,7 @@ def registerABS(buscarNombre,registrar):
         conn3.update(worksheet="Asistencia", data=update_row)
         st.success(buscarNombre)
         st.info("Se registro su asistencia correctamente")
-        if new_to_add[5] == "Vip":
+        if tipo == "Vip":
             st.info("Usuario VIP")
         else:
             st.info("Usuario regular")
@@ -67,6 +67,7 @@ if picture is not None:
     if data:
         checkingName = obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","Dirección de correo electrónico")
         if checkingName is not None:
+            tipoU = obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","TipoDeUsuario")
             new_row = pd.DataFrame(
                 [
                     {
@@ -75,11 +76,11 @@ if picture is not None:
                         "Edad" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","Edad"),
                         "Correo" : checkingName,
                         "Miembro o Visitante" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","¿Miembro o Visitante?"),
-                        "Tipo" : obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","TipoDeUsuario"),
+                        "Tipo" : tipoU,
                     }
                 ]
             )
-            registerABS(data,new_row)
+            registerABS(data,new_row,tipoU)
         else:
             st.warning("No hay registros.")
     else:
