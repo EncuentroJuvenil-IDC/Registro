@@ -10,41 +10,38 @@ import pandas as pd
 #Activar y desactivar la cámara
 enable = st.checkbox("Enable camera")
 
-#Conectar el documento de google
-conn = st.connection("gsheets", type=GSheetsConnection)
-#Conectar las hojas
-existing_data = conn.read(worksheet="RespuestasFormulario")
-asistencia = conn.read(worksheet="Asistencia")
-otros = conn.read(worksheet="Otros")
-df = pd.DataFrame(existing_data)
+#Conectar los documentos de google
+conn1 = st.connection("gsheets", type=GSheetsConnection)
+preregistro = conn1.read(worksheet="RespuestasPRegistro")
+conn2 = st.connection("gsheets_pagosregistrados", type=GSheetsConnection)
+pagosregistrados = conn2.read(worksheet="RespuestasPago")
+conn3 = st.connection("gsheets_asistencia", type=GSheetsConnection)
+asistencia = conn3.read(worksheet="Asistencia")
 
-#Funcion de registro
-def registerABS(Nombre = "Hola",lugarHoja = "Otros"):
+def obtenerInfo(buscarNombre,column,bookname,sheetname,searching):
     st.cache_data.clear()
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    guardarEnHoja = conn.read(worksheet=lugarHoja)
-    if Nombre in guardarEnHoja["RegistrosQR"].values:
-        st.success("Ya ha sido registrado su asistencia el dia de hoy")
-        st.stop()
-    else:
-        new_to_add = pd.DataFrame([{"RegistrosQR": Nombre}])
-        update_row = pd.concat([guardarEnHoja, new_to_add], ignore_index=False)
-        conn.update(worksheet=lugarHoja, data=update_row)
-        st.success("Se registro su asistencia correctamente")
-
-#Funcion de revisar pago
-def get_info_by_QR(df, name_to_check="Hola",column="Pago"):
-    st.cache_data.clear()
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    existing_data = conn.read(worksheet="RespuestasFormulario")
+    conn = st.connection(bookname, type=GSheetsConnection)
+    existing_data = conn.read(worksheet=sheetname)
     df = pd.DataFrame(existing_data)
-    # Revisar el nombre en la lista
-    if name_to_check in df['VariableAuxiliar'].values:
+    if buscarNombre in df[column].values:
         #Encontrar el index
-        idx = df[df['VariableAuxiliar'] == name_to_check].index[0]
-        return df.at[idx, column]  #Regresa el valor guardado en la columna de pagos
+        idx = df[df[column] == buscarNombre].index[0]
+        return df.at[idx, searching]  #Regresa el valor guardado en la columna
     else:
         return None  #Nombre no esta en la lista
+
+def registerABS(buscarNombre,registrar):
+    st.cache_data.clear()
+    conn3 = st.connection("gsheets_asistencia", type=GSheetsConnection)
+    guardarasistencia = conn3.read(worksheet="Asistencia")
+    if buscarNombre in guardarasistencia["NombreCompleto"].values:
+        st.success("Ya ha sido registrado su asistencia")
+        st.stop()
+    else:
+        new_to_add = registrar
+        update_row = pd.concat([guardarasistencia, new_to_add], ignore_index=False)
+        conn3.update(worksheet="Asistencia", data=update_row)
+        st.success("Se registro su asistencia correctamente")
 
 #Función principal
 picture = st.camera_input("Take a picture", disabled=not enable)
@@ -62,17 +59,22 @@ if picture is not None:
     data, points, _ = detector.detectAndDecode(gray_image)
     # Display the result
     if data:
-        checkingName = get_info_by_QR(df, data,"VariableAux2")
-        st.write("Nombre de usario registrado:\n\n", checkingName)
-        checkingPay = get_info_by_QR(df, data,"Pago")
-        if checkingPay is not None:
-            if checkingPay == "si":
-                st.success("El pago ha sido realizado")
-            else:
-                st.warning("El pago no ha sido efectuado")
-            registerABS(data,"Asistencia")
+        checkingName = obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","Dirección de correo electrónico")
+        if checkingName is not None:
+            new_row = pd.DataFrame(
+                [
+                    {
+                        "NombreCompleto" : obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","Nombre completo"),
+                        "Teléfono" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","Teléfono"),
+                        "Edad" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","Edad"),
+                        "Correo" : checkingName,
+                        "Miembro o Visitante" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","¿Miembro o Visitante?"),
+                        "Tipo" : obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","TipoDeUsuario"),
+                    }
+                ]
+            )
+            registerABS(data,new_row)
         else:
-            st.warning(f"No hay registros")
-            registerABS(data,"Otros")
+            st.warning("No hay registros.")
     else:
-        st.write("No QR code found in the image.")
+        st.write("No hay códigos QR en la imagen.")
