@@ -37,6 +37,7 @@ def registerABS(buscarNombre,registrar,tipo):
     if buscarNombre in guardarasistencia["NombreCompleto"].values:
         st.success(buscarNombre)
         st.info("Ya ha sido registrado su asistencia")
+        st.info(f"Usuario {tipo}")
         st.stop()
     else:
         new_to_add = registrar
@@ -44,10 +45,7 @@ def registerABS(buscarNombre,registrar,tipo):
         conn3.update(worksheet="Asistencia", data=update_row)
         st.success(buscarNombre)
         st.info("Se registro su asistencia correctamente")
-        if tipo == "Vip":
-            st.info("Usuario VIP")
-        else:
-            st.info("Usuario regular")
+        st.info(f"Usuario {tipo}")
 
 #Función principal
 picture = st.camera_input("Take a picture", disabled=not enable)
