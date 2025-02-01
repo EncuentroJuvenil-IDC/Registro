@@ -61,9 +61,9 @@ if picture is not None:
     data, points, _ = detector.detectAndDecode(gray_image)
     # Display the result
     if data:
-        checkingName = obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","Dirección de correo electrónico")
+        checkingName = obtenerInfo(data,"GeneradorQR","gsheets_pagosregistrados","RespuestasPago","Dirección de correo electrónico")
         if checkingName is not None:
-            tipoU = obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","TipoDeUsuario")
+            tipoU = obtenerInfo(data,"GeneradorQR","gsheets_pagosregistrados","RespuestasPago","TipoDeUsuario")
             new_row = pd.DataFrame(
                 [
                     {
