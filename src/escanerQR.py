@@ -9,7 +9,7 @@ import pandas as pd
 
 #Activar y desactivar la cámara
 enable = st.checkbox("Activar camara")
-#New
+
 #Conectar los documentos de google
 conn2 = st.connection("gsheets_pagosregistrados", type=GSheetsConnection)
 pagosregistrados = conn2.read(worksheet="RespuestasPago")
