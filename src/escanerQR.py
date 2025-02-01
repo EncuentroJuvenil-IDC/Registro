@@ -8,11 +8,9 @@ from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 
 #Activar y desactivar la cámara
-enable = st.checkbox("Enable camera")
+enable = st.checkbox("Activar camara")
 #New
 #Conectar los documentos de google
-conn1 = st.connection("gsheets", type=GSheetsConnection)
-preregistro = conn1.read(worksheet="RespuestasPRegistro")
 conn2 = st.connection("gsheets_pagosregistrados", type=GSheetsConnection)
 pagosregistrados = conn2.read(worksheet="RespuestasPago")
 conn3 = st.connection("gsheets_asistencia", type=GSheetsConnection)
@@ -48,7 +46,7 @@ def registerABS(buscarNombre,registrar,tipo):
         st.info(f"Usuario {tipo}")
 
 #Función principal
-picture = st.camera_input("Take a picture", disabled=not enable)
+picture = st.camera_input("Leer QR", disabled=not enable)
 
 #Imagen guardada en el buffer
 if picture is not None:
@@ -69,11 +67,8 @@ if picture is not None:
             new_row = pd.DataFrame(
                 [
                     {
-                        "NombreCompleto" : obtenerInfo(data,"Nombre completo","gsheets_pagosregistrados","RespuestasPago","Nombre completo"),
-                        "Teléfono" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","Teléfono"),
-                        "Edad" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","Edad"),
+                        "NombreCompleto" : data,
                         "Correo" : checkingName,
-                        "Miembro o Visitante" : obtenerInfo(checkingName,"Dirección de correo electrónico","gsheets","RespuestasPRegistro","¿Miembro o Visitante?"),
                         "Tipo" : tipoU,
                     }
                 ]
