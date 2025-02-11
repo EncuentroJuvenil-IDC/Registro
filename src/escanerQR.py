@@ -75,6 +75,6 @@ if picture is not None:
             )
             registerABS(data,new_row,tipoU)
         else:
-            st.warning("No hay registros.")
+            st.warning("QR no corresponde al registro.")
     else:
         st.error("No hay códigos QR en la imagen.")
