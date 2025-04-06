@@ -2,5 +2,4 @@ streamlit
 pandas
 st-gsheets-connection
 pillow
-opencv-python-headless
 numpy

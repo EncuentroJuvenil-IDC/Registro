@@ -1,3 +1,6 @@
+#------------------------------------------------------------------
+#Librerias
+#------------------------------------------------------------------
 import streamlit as st
 #Leer códigos QR
 import cv2
@@ -6,65 +9,66 @@ from PIL import Image
 #Guardar los registros en un documento en la nube
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
-
+#------------------------------------------------------------------
+#Funciones
+#------------------------------------------------------------------
+#Limpiar y leer dataframe
+def limpiar_y_leer(Libro,Hoja):
+    try:
+        st.cache_data.clear()
+        conn = st.connection(Libro, type=GSheetsConnection)
+        datosDeLibroHoja = conn.read(worksheet=Hoja)
+        df = pd.DataFrame(datosDeLibroHoja)
+        return df
+    except:
+        return
+#Revisar Información
+def revisarInfo(Libro,Hoja,FolioQR,LecturaQR,ValorPorBuscar):
+    try:
+        df = limpiar_y_leer(Libro,Hoja)
+        if LecturaQR in df[FolioQR].values:
+            valorObtenido = df.loc[df[FolioQR] == LecturaQR, ValorPorBuscar].iloc[0]
+            return valorObtenido
+    except:
+        return
+#Registrar asistencia
+def registrarAsistencia(Libro,Hoja,LecturaQR,Duplicados,lineRegistro,tipoU):
+    try:
+        df = limpiar_y_leer(Libro,Hoja)
+        if LecturaQR in df[Duplicados].values:
+            st.success(buscarNombre)
+            st.warning("Ya ha sido registrado su asistencia")
+            st.info(f"Usuario {tipoU}")
+            st.stop()
+        else:
+            nuevaLinea = pd.concat([df, lineRegistro], ignore_index=False)
+            df.update(worksheet=Hoja, data=nuevaLinea)
+            st.success(buscarNombre)
+            st.success("Se registro su asistencia correctamente")
+            st.info(f"Usuario {tipoU}")
+            st.stop()
+#------------------------------------------------------------------
+#Principal
+#------------------------------------------------------------------
 #Activar y desactivar la cámara
 enable = st.checkbox("Activar camara")
-
-#Conectar los documentos de google
-conn2 = st.connection("gsheets_pagosregistrados", type=GSheetsConnection)
-pagosregistrados = conn2.read(worksheet="RespuestasPago")
-conn3 = st.connection("gsheets_asistencia", type=GSheetsConnection)
-asistencia = conn3.read(worksheet="Asistencia")
-
-def obtenerInfo(buscarNombre,column,bookname,sheetname,searching):
-    st.cache_data.clear()
-    conn = st.connection(bookname, type=GSheetsConnection)
-    existing_data = conn.read(worksheet=sheetname)
-    df = pd.DataFrame(existing_data)
-    if buscarNombre in df[column].values:
-        #Encontrar el index
-        idx = df[df[column] == buscarNombre].index[0]
-        return df.at[idx, searching]  #Regresa el valor guardado en la columna
-    else:
-        return None  #Nombre no esta en la lista
-
-def registerABS(buscarNombre,registrar,tipo):
-    st.cache_data.clear()
-    conn3 = st.connection("gsheets_asistencia", type=GSheetsConnection)
-    guardarasistencia = conn3.read(worksheet="Asistencia")
-    if buscarNombre in guardarasistencia["NombreCompleto"].values:
-        st.success(buscarNombre)
-        st.warning("Ya ha sido registrado su asistencia")
-        st.info(f"Usuario {tipo}")
-        st.stop()
-    else:
-        new_to_add = registrar
-        update_row = pd.concat([guardarasistencia, new_to_add], ignore_index=False)
-        conn3.update(worksheet="Asistencia", data=update_row)
-        st.success(buscarNombre)
-        st.success("Se registro su asistencia correctamente")
-        st.info(f"Usuario {tipo}")
-
 #Función principal
 picture = st.camera_input("Leer QR", disabled=not enable)
-
 #Imagen guardada en el buffer
 if picture is not None:
-    # Convert the uploaded image to a format suitable for OpenCV
+    # leer imagen
     image = Image.open(picture)
     image_np = np.array(image)
-    # Convert to grayscale
     gray_image = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
-    # Create a QRCodeDetector
     detector = cv2.QRCodeDetector()
-    # Detect and decode the QR code
+    #Decodificar QR
     data, points, _ = detector.detectAndDecode(gray_image)
-    # Display the result
+    # Guardar registros
     if data:
-        checkingName = obtenerInfo(data,"GeneradorQR","gsheets_pagosregistrados","RespuestasPago","Dirección de correo electrónico")
+        RevisarU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","GeneradorQR",data,"Dirección de correo electrónico")
         if checkingName is not None:
-            tipoU = obtenerInfo(data,"GeneradorQR","gsheets_pagosregistrados","RespuestasPago","TipoDeUsuario")
-            new_row = pd.DataFrame(
+            tipoU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","GeneradorQR",data,"TipoDeUsuario")
+            lineRegistro = pd.DataFrame(
                 [
                     {
                         "NombreCompleto" : data,
@@ -73,8 +77,9 @@ if picture is not None:
                     }
                 ]
             )
-            registerABS(data,new_row,tipoU)
+            registrarAsistencia("gsheets_asistencia","Asistencia",data,"NombreCompleto",lineRegistro,tipoU)
         else:
             st.warning("QR no corresponde al registro.")
     else:
         st.error("No hay códigos QR en la imagen.")
+#Fin
