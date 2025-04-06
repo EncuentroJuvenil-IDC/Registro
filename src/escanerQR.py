@@ -68,7 +68,7 @@ if picture is not None:
     # Guardar registros
     if data:
         RevisarU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","GeneradorQR",data,"Dirección de correo electrónico")
-        if checkingName is not None:
+        if RevisarU is not None:
             tipoU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","GeneradorQR",data,"TipoDeUsuario")
             lineRegistro = pd.DataFrame(
                 [
