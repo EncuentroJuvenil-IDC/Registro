@@ -40,8 +40,9 @@ def registrarAsistencia(Libro,Hoja,LecturaQR,Duplicados,lineRegistro,tipoU):
         st.info(f"Usuario {tipoU}")
         st.stop()
     else:
+        conexion = st.connection(Libro, type=GSheetsConnection)
         nuevaLinea = pd.concat([df, lineRegistro], ignore_index=False)
-        df.update(worksheet=Hoja, data=nuevaLinea)
+        conexion.update(worksheet=Hoja, data=nuevaLinea)
         st.success(LecturaQR)
         st.success("Se registro su asistencia correctamente")
         st.info(f"Usuario {tipoU}")
