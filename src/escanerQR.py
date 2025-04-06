@@ -74,7 +74,7 @@ if picture is not None:
                 [
                     {
                         "NombreCompleto" : data,
-                        "Correo" : checkingName,
+                        "Correo" : RevisarU,
                         "Tipo" : tipoU,
                     }
                 ]
