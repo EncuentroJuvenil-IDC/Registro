@@ -33,22 +33,19 @@ def revisarInfo(Libro,Hoja,FolioQR,LecturaQR,ValorPorBuscar):
         return
 #Registrar asistencia
 def registrarAsistencia(Libro,Hoja,LecturaQR,Duplicados,lineRegistro,tipoU):
-    try:
-        df = limpiar_y_leer(Libro,Hoja)
-        if LecturaQR in df[Duplicados].values:
-            st.success(buscarNombre)
-            st.warning("Ya ha sido registrado su asistencia")
-            st.info(f"Usuario {tipoU}")
-            st.stop()
-        else:
-            nuevaLinea = pd.concat([df, lineRegistro], ignore_index=False)
-            df.update(worksheet=Hoja, data=nuevaLinea)
-            st.success(buscarNombre)
-            st.success("Se registro su asistencia correctamente")
-            st.info(f"Usuario {tipoU}")
-            st.stop()
-    except:
-        return
+    df = limpiar_y_leer(Libro,Hoja)
+    if LecturaQR in df[Duplicados].values:
+        st.success(buscarNombre)
+        st.warning("Ya ha sido registrado su asistencia")
+        st.info(f"Usuario {tipoU}")
+        st.stop()
+    else:
+        nuevaLinea = pd.concat([df, lineRegistro], ignore_index=False)
+        df.update(worksheet=Hoja, data=nuevaLinea)
+        st.success(buscarNombre)
+        st.success("Se registro su asistencia correctamente")
+        st.info(f"Usuario {tipoU}")
+        st.stop()
 #------------------------------------------------------------------
 #Principal
 #------------------------------------------------------------------
