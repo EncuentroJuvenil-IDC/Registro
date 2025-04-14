@@ -32,12 +32,13 @@ def revisarInfo(Libro,Hoja,FolioQR,LecturaQR,ValorPorBuscar):
     except:
         return
 #Registrar asistencia
-def registrarAsistencia(Libro,Hoja,LecturaQR,Duplicados,lineRegistro,tipoU):
+def registrarAsistencia(Libro,Hoja,LecturaQR,Duplicados,lineRegistro,tipoU,alias):
     df = limpiar_y_leer(Libro,Hoja)
     if LecturaQR in df[Duplicados].values:
         st.success(LecturaQR)
         st.warning("Ya ha sido registrado su asistencia")
         st.info(f"Usuario {tipoU}")
+        st.info(f"Alias {alias}")
         st.stop()
     else:
         conexion = st.connection(Libro, type=GSheetsConnection)
@@ -79,7 +80,7 @@ if picture is not None:
                     }
                 ]
             )
-            registrarAsistencia("gsheets_asistencia","Asistencia",data,"NombreCompleto",lineRegistro,tipoU)
+            registrarAsistencia("gsheets_asistencia","Asistencia",data,"NombreCompleto",lineRegistro,tipoU,alias)
         else:
             st.warning("QR no corresponde al registro.")
     else:
