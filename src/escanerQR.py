@@ -47,6 +47,7 @@ def registrarAsistencia(Libro,Hoja,LecturaQR,Duplicados,lineRegistro,tipoU,alias
         st.success(LecturaQR)
         st.success("Se registro su asistencia correctamente")
         st.info(f"Usuario {tipoU}")
+        st.info(f"Alias {alias}")
         st.stop()
 #------------------------------------------------------------------
 #Principal
