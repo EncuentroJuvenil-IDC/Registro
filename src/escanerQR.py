@@ -68,12 +68,14 @@ if picture is not None:
         RevisarU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","PreubasFormato",data,"Dirección de correo electrónico")
         if RevisarU is not None:
             tipoU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","PreubasFormato",data,"TipoDeUsuario")
+            alias = revisarInfo("gsheets_pagosregistrados","RespuestasPago","PreubasFormato",data,"¿Quieres usar tu nombre en tu gafete o personalizarlo?")
             lineRegistro = pd.DataFrame(
                 [
                     {
                         "NombreCompleto" : data,
                         "Correo" : RevisarU,
                         "Tipo" : tipoU,
+                        "Alias" : alias,
                     }
                 ]
             )
