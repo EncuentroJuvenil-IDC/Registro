@@ -67,10 +67,10 @@ if picture is not None:
     data, points, _ = detector.detectAndDecode(gray_image)
     # Guardar registros
     if data:
-        RevisarU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","PreubasFormato",data,"Dirección de correo electrónico")
+        RevisarU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","GeneradorQR",data,"Dirección de correo electrónico")
         if RevisarU is not None:
-            tipoU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","PreubasFormato",data,"TipoDeUsuario")
-            alias = revisarInfo("gsheets_pagosregistrados","RespuestasPago","PreubasFormato",data,"¿Quieres usar tu nombre en tu gafete o personalizarlo?")
+            tipoU = revisarInfo("gsheets_pagosregistrados","RespuestasPago","GeneradorQR",data,"TipoDeUsuario")
+            alias = revisarInfo("gsheets_pagosregistrados","RespuestasPago","GeneradorQR",data,"¿Quieres usar tu nombre en tu gafete o personalizarlo?")
             lineRegistro = pd.DataFrame(
                 [
                     {
